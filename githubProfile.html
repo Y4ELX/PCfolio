@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Y4ELX - GitHub Profile</title>
+  <style>
+    :root {
+        --color-bg: #151924;
+        --color-bg-secondary: #1d2231;
+        --color-text: #c9d1d9;
+        --color-border: #30363d;
+        --color-primary: #58a6ff;
+        --color-secondary: #6e7681;
+    }
+
+    html{
+        scrollbar-color: #40ff23 var(--color-bg);
+    }
+
+    .ContributionCalendar-day[data-level='0']{
+        background-color: var(--color-bg-secondary) !important;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        margin: 0px;
+        padding: 0px;
+        line-height: 1.5;
+    }
+
+    .calendar a{
+        color: transparent
+    }
+    
+    .container {
+      max-width: 896px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    @media (min-width: 768px) {
+      .profile-header {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+    
+    .avatar {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      margin-right: 30px;
+      border: 1px solid var(--color-border);
+    }
+    
+    .profile-info {
+      flex: 1;
+    }
+    
+    .name {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+    }
+    
+    .username {
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--color-secondary);
+      margin: 0 0 20px 0;
+    }
+    
+    .bio {
+      margin: 0 0 20px 0;
+      font-size: 16px;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+    
+    .stat svg {
+      margin-right: 5px;
+      fill: var(--color-secondary);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 5px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .btn-primary {
+      background-color: #238636;
+      color: white;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+    }
+    
+    .btn-primary:hover {
+      background-color: #2ea043;
+    }
+    
+    .btn-secondary {
+      background-color: #21262d;
+      color: var(--color-primary);
+      border: 1px solid var(--color-border);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #30363d;
+      border-color: #8b949e;
+    }
+    
+    .calendar-container {
+      margin-top: 5px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 20px;
+    }
+
+    .calendar{
+        border: solid 1px var(--color-border) !important;
+    }
+    
+    .calendar-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 15px 0;
+    }
+    
+    .loading {
+      color: var(--color-secondary);
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .error {
+      color: #f85149;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .ContributionCalendar-day[data-level='0'],
+    .ContributionCalendar-day[data-level='1'],
+    .ContributionCalendar-day[data-level='2'],
+    .ContributionCalendar-day[data-level='3'],
+    .ContributionCalendar-day[data-level='4'] {
+        width: 10px !important;
+        height: 3px !important;
+        border-radius: 2px;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="profile-header" id="github-profile">
+      <div class="loading">Cargando perfil...</div>
+    </div>
+    
+    <div class="calendar-container">
+      <h3 class="calendar-title">Contribuciones</h3>
+      <div class="calendar">
+        Loading calendar...
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts del calendario -->
+  <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css" />
+  <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script>
+  
+  <script>
+    // Cargar datos del perfil
+    fetch('https://api.github.com/users/Y4ELX')
+      .then(response => response.json())
+      .then(user => {
+        document.getElementById('github-profile').innerHTML = `
+          <img src="${user.avatar_url}" class="avatar" alt="Avatar de ${user.login}">
+          <div class="profile-info">
+            <h1 class="name">${user.name || user.login}</h1>
+            <h2 class="username">${user.login}</h2>
+            <p class="bio">${user.bio || "No hay biografía disponible."}</p>
+            
+            <div class="stats">
+              <div class="stat">
+                <svg height="16" viewBox="0 0 16 16" width="16">
+                  <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"></path>
+                </svg>
+                <span>${user.followers} seguidores</span>
+              </div>
+              <div class="stat">
+                <svg height="16" viewBox="0 0 16 16" width="16">
+                  <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"></path>
+                </svg>
+                <span>${user.following} siguiendo</span>
+              </div>
+              <div class="stat">
+                <svg height="16" viewBox="0 0 16 16" width="16">
+                  <path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path>
+                </svg>
+                <span>${user.public_repos} repositorios</span>
+              </div>
+            </div>
+            
+            <div class="actions">
+              <a href="${user.html_url}" class="btn btn-primary" target="_blank">Seguir</a>
+              <a href="https://github.com/${user.login}?tab=repositories" class="btn btn-secondary" target="_blank">Repositorios</a>
+            </div>
+          </div>
+        `;
+      })
+      .catch(error => {
+        document.getElementById('github-profile').innerHTML = `
+          <div class="error">Error al cargar el perfil. Por favor, inténtalo de nuevo más tarde.</div>
+        `;
+        console.error(error);
+      });
+    
+    // Inicializar calendario de contribuciones
+    GitHubCalendar(".calendar", "Y4ELX", { 
+      responsive: true,
+      tooltips: true,
+      global_stats: false
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Browser</title>
+    <style>
+        @font-face {
+            font-family: pixel;
+            src: url(assets/pixel.ttf);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: pixel;
+            background-color: #151924;
+            color: #40FF23;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .browser-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #151924;
+            border: 2px solid #40FF23;
+        }
+
+        .browser-header {
+            background-color: #0c0e14;
+            padding: 5px;
+            border-bottom: 2px solid #40FF23;
+            display: flex;
+            align-items: center;
+        }
+
+        .browser-title {
+            color: #40FF23;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .tabs-container {
+            background-color: #1a1f2e;
+            display: flex;
+            border-bottom: 2px solid #40FF23;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background-color: #151924;
+            border-right: 1px solid #40FF23;
+            cursor: pointer;
+            color: #40FF23;
+            font-size: 12px;
+            white-space: nowrap;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 2px solid transparent;
+        }
+
+        .tab.active {
+            background-color: #40FF23;
+            color: #151924;
+            border-top: 2px solid #40FF23;
+        }
+
+        .tab:hover:not(.active) {
+            background-color: #1a1f2e;
+        }
+
+        .tab-close {
+            margin-left: 8px;
+            width: 12px;
+            height: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            font-size: 10px;
+        }
+
+        .tab-close:hover {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .new-tab-btn {
+            padding: 8px 12px;
+            background-color: #151924;
+            border: none;
+            color: #40FF23;
+            cursor: pointer;
+            font-family: pixel;
+            font-size: 12px;
+            border-left: 1px solid #40FF23;
+        }
+
+        .new-tab-btn:hover {
+            background-color: #1a1f2e;
+        }
+
+        .address-bar {
+            background-color: #0c0e14;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #40FF23;
+        }
+
+        .nav-btn {
+            width: 30px;
+            height: 24px;
+            background-color: #151924;
+            border: 1px solid #40FF23;
+            color: #40FF23;
+            cursor: pointer;
+            font-family: pixel;
+            font-size: 12px;
+        }
+
+        .nav-btn:hover {
+            background-color: #40FF23;
+            color: #151924;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .url-input {
+            flex: 1;
+            background-color: #151924;
+            border: 1px solid #40FF23;
+            color: #40FF23;
+            padding: 4px 8px;
+            font-family: pixel;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .url-input:focus {
+            border-color: #66ff44;
+            box-shadow: 0 0 5px rgba(64, 255, 35, 0.3);
+        }
+
+        .go-btn {
+            background-color: #151924;
+            border: 1px solid #40FF23;
+            color: #40FF23;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-family: pixel;
+            font-size: 12px;
+        }
+
+        .go-btn:hover {
+            background-color: #40FF23;
+            color: #151924;
+        }
+
+        .content-area {
+            flex: 1;
+            background-color: #151924;
+            position: relative;
+        }
+
+        .browser-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: white;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #40FF23;
+            font-size: 14px;
+        }
+
+        .status-bar {
+            background-color: #0c0e14;
+            border-top: 1px solid #40FF23;
+            padding: 4px 8px;
+            font-size: 10px;
+            color: #40FF23;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #151924;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #40FF23;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #66ff44;
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-container">
+        <!-- Barra de direcciones -->
+        <div class="address-bar">
+            <button class="nav-btn" onclick="goBack()" disabled>◀</button>
+            <button class="nav-btn" onclick="goForward()" disabled>▶</button>
+            <button class="nav-btn" onclick="refresh()">⟳</button>
+            <input type="text" class="url-input" placeholder="Introduce una URL..." value="about:home">
+            <button class="go-btn" onclick="navigateToURL()">IR</button>
+        </div>
+
+        <!-- Pestañas -->
+        <div class="tabs-container">
+            <div class="tab active" data-tab-id="1">
+                <span>Inicio</span>
+                <div class="tab-close">×</div>
+            </div>
+            <button class="new-tab-btn" id="new-tab-btn">+</button>
+        </div>
+        
+        <!-- Área de contenido -->
+        <div class="content-area">
+            <iframe class="browser-iframe" src="about:blank"></iframe>
+            <div class="loading" style="display: none;">Cargando...</div>
+        </div>
+
+        <!-- Barra de estado -->
+        <div class="status-bar">
+            <span class="status-text">Listo</span>
+            <span class="page-info">about:home</span>
+        </div>
+    </div>
+
+    <script>
+        let tabCounter = 1;
+        let currentTabId = 1;
+        let tabs = {
+            1: {
+                title: 'Inicio',
+                url: 'about:home',
+                content: `
+                    <div style="font-family: pixel; background: linear-gradient(135deg, #151924, #1a1f2e); color: #40FF23; padding: 40px; text-align: center; height: 100vh; box-sizing: border-box;">
+                        <h1 style="font-size: 32px; margin-bottom: 20px; text-shadow: 0 0 10px #40FF23;">RETRO BROWSER</h1>
+                        <p style="font-size: 16px; margin-bottom: 30px;">Bienvenido al navegador retro del futuro pasado</p>
+                        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                            <button onclick="parent.quickNavigate('https://github.com')" style="background: #151924; border: 2px solid #40FF23; color: #40FF23; padding: 10px 20px; font-family: pixel; cursor: pointer;">GitHub</button>
+                            <button onclick="parent.quickNavigate('https://stackoverflow.com')" style="background: #151924; border: 2px solid #40FF23; color: #40FF23; padding: 10px 20px; font-family: pixel; cursor: pointer;">Stack Overflow</button>
+                            <button onclick="parent.quickNavigate('https://developer.mozilla.org')" style="background: #151924; border: 2px solid #40FF23; color: #40FF23; padding: 10px 20px; font-family: pixel; cursor: pointer;">MDN</button>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function switchTab(tabId) {
+            // Remover clase active de todas las pestañas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Agregar clase active a la pestaña seleccionada
+            document.querySelector(`[data-tab-id="${tabId}"]`).classList.add('active');
+            
+            currentTabId = tabId;
+            loadTabContent(tabId);
+        }
+
+        function loadTabContent(tabId) {
+            const tab = tabs[tabId];
+            const iframe = document.querySelector('.browser-iframe');
+            const urlInput = document.querySelector('.url-input');
+            const statusText = document.querySelector('.status-text');
+            const pageInfo = document.querySelector('.page-info');
+            
+            if (tab) {
+                urlInput.value = tab.url;
+                pageInfo.textContent = tab.url;
+                
+                if (tab.url.startsWith('about:')) {
+                    // Contenido local
+                    iframe.srcdoc = tab.content;
+                    statusText.textContent = 'Listo';
+                } else {
+                    // URL externa
+                    statusText.textContent = 'Cargando...';
+                    iframe.src = tab.url;
+                    
+                    iframe.onload = function() {
+                        statusText.textContent = 'Listo';
+                    };
+                }
+            }
+        }
+
+        function addNewTab() {
+            tabCounter++;
+            const newTabId = tabCounter;
+            
+            tabs[newTabId] = {
+                title: 'Nueva pestaña',
+                url: 'about:blank',
+                content: '<div style="font-family: pixel; background: #151924; color: #40FF23; padding: 20px; text-align: center;"><h2>Nueva pestaña</h2><p>Introduce una URL para navegar</p></div>'
+            };
+            
+            // Crear el elemento de pestaña
+            const newTabBtn = document.querySelector('.new-tab-btn');
+            const newTab = document.createElement('div');
+            newTab.className = 'tab';
+            newTab.setAttribute('data-tab-id', newTabId);
+            newTab.innerHTML = `
+                <span>Nueva pestaña</span>
+                <div class="tab-close">×</div>
+            `;
+            
+            // Agregar event listener para hacer clic en la pestaña
+            newTab.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('tab-close')) {
+                    switchTab(newTabId);
+                }
+            });
+            
+            // Agregar event listener para cerrar la pestaña
+            const closeBtn = newTab.querySelector('.tab-close');
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                closeTab(newTabId);
+            });
+            
+            newTabBtn.parentNode.insertBefore(newTab, newTabBtn);
+            switchTab(newTabId);
+        }
+
+        function closeTab(tabId, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            if (Object.keys(tabs).length === 1) {
+                return; // No cerrar la última pestaña
+            }
+            
+            delete tabs[tabId];
+            const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+            
+            if (currentTabId === tabId) {
+                // Cambiar a la primera pestaña disponible
+                const firstTabId = Object.keys(tabs)[0];
+                switchTab(parseInt(firstTabId));
+            }
+        }
+
+        function navigateToURL() {
+            const url = document.querySelector('.url-input').value;
+            tabs[currentTabId].url = url;
+            
+            if (url.startsWith('about:')) {
+                tabs[currentTabId].content = '<div style="font-family: pixel; background: #151924; color: #40FF23; padding: 20px;"><h2>Página no encontrada</h2><p>La página about: solicitada no existe.</p></div>';
+            }
+            
+            // Actualizar título de la pestaña
+            const tabElement = document.querySelector(`[data-tab-id="${currentTabId}"] span`);
+            if (url.length > 20) {
+                tabElement.textContent = url.substring(0, 17) + '...';
+            } else {
+                tabElement.textContent = url || 'Nueva pestaña';
+            }
+            
+            loadTabContent(currentTabId);
+        }
+
+        function quickNavigate(url) {
+            document.querySelector('.url-input').value = url;
+            navigateToURL();
+        }
+
+        function goBack() {
+            // Funcionalidad de retroceso (simplificada)
+            console.log('Ir atrás');
+        }
+
+        function goForward() {
+            // Funcionalidad de avance (simplificada)
+            console.log('Ir adelante');
+        }
+
+        function refresh() {
+            loadTabContent(currentTabId);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar contenido inicial
+            loadTabContent(1);
+            
+            // Event listener para la pestaña inicial
+            const initialTab = document.querySelector('[data-tab-id="1"]');
+            if (initialTab) {
+                initialTab.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('tab-close')) {
+                        switchTab(1);
+                    }
+                });
+                
+                // Event listener para cerrar la pestaña inicial
+                const initialCloseBtn = initialTab.querySelector('.tab-close');
+                if (initialCloseBtn) {
+                    initialCloseBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        closeTab(1);
+                    });
+                }
+            }
+            
+            // Event listener para el botón de nueva pestaña
+            const newTabBtn = document.getElementById('new-tab-btn');
+            if (newTabBtn) {
+                newTabBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    addNewTab();
+                });
+            }
+            
+            // Enter en la barra de direcciones
+            document.querySelector('.url-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    navigateToURL();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
