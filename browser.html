@@ -224,14 +224,14 @@
             <button class="nav-btn" onclick="goBack()" disabled>◀</button>
             <button class="nav-btn" onclick="goForward()" disabled>▶</button>
             <button class="nav-btn" onclick="refresh()">⟳</button>
-            <input type="text" class="url-input" placeholder="Introduce una URL..." value="about:home">
+            <input type="text" class="url-input" placeholder="Introduce una URL..." value="chrome://dino">
             <button class="go-btn" onclick="navigateToURL()">IR</button>
         </div>
 
         <!-- Pestañas -->
         <div class="tabs-container">
             <div class="tab active" data-tab-id="1">
-                <span>Inicio</span>
+                <span>Dino Game - Chrome</span>
                 <div class="tab-close">×</div>
             </div>
             <button class="new-tab-btn" id="new-tab-btn">+</button>
@@ -246,7 +246,7 @@
         <!-- Barra de estado -->
         <div class="status-bar">
             <span class="status-text">Listo</span>
-            <span class="page-info">about:home</span>
+            <span class="page-info">chrome://dino</span>
         </div>
     </div>
 
@@ -255,18 +255,388 @@
         let currentTabId = 1;
         let tabs = {
             1: {
-                title: 'Inicio',
-                url: 'about:home',
+                title: 'Dino Game - Chrome',
+                url: 'chrome://dino',
                 content: `
-                    <div style="font-family: pixel; background: linear-gradient(135deg, #151924, #1a1f2e); color: #40FF23; padding: 40px; text-align: center; height: 100vh; box-sizing: border-box;">
-                        <h1 style="font-size: 32px; margin-bottom: 20px; text-shadow: 0 0 10px #40FF23;">RETRO BROWSER</h1>
-                        <p style="font-size: 16px; margin-bottom: 30px;">Bienvenido al navegador retro del futuro pasado</p>
-                        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                            <button onclick="parent.quickNavigate('https://github.com')" style="background: #151924; border: 2px solid #40FF23; color: #40FF23; padding: 10px 20px; font-family: pixel; cursor: pointer;">GitHub</button>
-                            <button onclick="parent.quickNavigate('https://stackoverflow.com')" style="background: #151924; border: 2px solid #40FF23; color: #40FF23; padding: 10px 20px; font-family: pixel; cursor: pointer;">Stack Overflow</button>
-                            <button onclick="parent.quickNavigate('https://developer.mozilla.org')" style="background: #151924; border: 2px solid #40FF23; color: #40FF23; padding: 10px 20px; font-family: pixel; cursor: pointer;">MDN</button>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            @font-face {
+                                font-family: pixel;
+                                src: url(assets/pixel.ttf);
+                            }
+                            
+                            body {
+                                margin: 0;
+                                padding: 0;
+                                background: #f7f7f7;
+                                font-family: pixel, monospace;
+                                overflow: hidden;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                            }
+                            
+                            .game-container {
+                                width: 800px;
+                                height: 200px;
+                                background: #f7f7f7;
+                                position: relative;
+                                border-bottom: 2px solid #535353;
+                                overflow: hidden;
+                            }
+                            
+                            .dino {
+                                width: 44px;
+                                height: 47px;
+                                background: #535353;
+                                position: absolute;
+                                bottom: 0;
+                                left: 50px;
+                            }
+                            
+                            .dino::before {
+                                content: '';
+                                position: absolute;
+                                width: 20px;
+                                height: 20px;
+                                background: #535353;
+                                top: 5px;
+                                left: 15px;
+                                border-radius: 50% 50% 0 0;
+                            }
+                            
+                            .dino::after {
+                                content: '';
+                                position: absolute;
+                                width: 8px;
+                                height: 8px;
+                                background: white;
+                                border-radius: 50%;
+                                top: 8px;
+                                left: 25px;
+                            }
+                            
+                            .dino.jump {
+                                animation: jump 0.5s ease-out;
+                            }
+                            
+                            .dino.duck {
+                                height: 25px;
+                                margin-top: 22px;
+                            }
+                            
+                            @keyframes jump {
+                                0% { bottom: 0; }
+                                50% { bottom: 80px; }
+                                100% { bottom: 0; }
+                            }
+                            
+                            .cactus {
+                                width: 20px;
+                                height: 40px;
+                                background: #535353;
+                                position: absolute;
+                                bottom: 0;
+                                right: -20px;
+                            }
+                            
+                            .cactus::before {
+                                content: '';
+                                position: absolute;
+                                width: 8px;
+                                height: 15px;
+                                background: #535353;
+                                top: 10px;
+                                left: -4px;
+                            }
+                            
+                            .cactus::after {
+                                content: '';
+                                position: absolute;
+                                width: 8px;
+                                height: 15px;
+                                background: #535353;
+                                top: 5px;
+                                right: -4px;
+                            }
+                            
+                            .pterodactyl {
+                                width: 30px;
+                                height: 25px;
+                                background: #535353;
+                                position: absolute;
+                                right: -30px;
+                                clip-path: polygon(0 50%, 20% 0%, 40% 20%, 60% 0%, 80% 30%, 100% 50%, 80% 70%, 60% 100%, 40% 80%, 20% 100%);
+                            }
+                            
+                            .cloud {
+                                width: 50px;
+                                height: 20px;
+                                background: #535353;
+                                border-radius: 20px;
+                                position: absolute;
+                                top: 30px;
+                                right: -50px;
+                                opacity: 0.3;
+                            }
+                            
+                            .cloud::before {
+                                content: '';
+                                position: absolute;
+                                width: 20px;
+                                height: 20px;
+                                background: #535353;
+                                border-radius: 50%;
+                                top: -10px;
+                                left: 10px;
+                            }
+                            
+                            .cloud::after {
+                                content: '';
+                                position: absolute;
+                                width: 25px;
+                                height: 25px;
+                                background: #535353;
+                                border-radius: 50%;
+                                top: -12px;
+                                right: 10px;
+                            }
+                            
+                            .score {
+                                position: absolute;
+                                top: 20px;
+                                right: 20px;
+                                font-family: pixel, monospace;
+                                font-size: 16px;
+                                color: #535353;
+                            }
+                            
+                            .game-over {
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                text-align: center;
+                                font-family: pixel, monospace;
+                                color: #535353;
+                                display: none;
+                            }
+                            
+                            .restart-btn {
+                                background: #535353;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                font-family: pixel, monospace;
+                                cursor: pointer;
+                                margin-top: 10px;
+                            }
+                            
+                            .instructions {
+                                position: absolute;
+                                bottom: -30px;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                font-family: pixel, monospace;
+                                color: #535353;
+                                font-size: 12px;
+                                text-align: center;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="game-container">
+                            <div class="dino" id="dino"></div>
+                            <div class="score" id="score">Score: 0</div>
+                            <div class="game-over" id="gameOver">
+                                <h2>Game Over</h2>
+                                <button class="restart-btn" onclick="restartGame()">Restart</button>
+                            </div>
+                            <div class="instructions">
+                                Presiona ESPACIO para saltar • ↓ para agacharse
+                            </div>
                         </div>
-                    </div>
+                        
+                        <script>
+                            let gameRunning = false;
+                            let score = 0;
+                            let obstacles = [];
+                            let clouds = [];
+                            let gameSpeed = 2;
+                            let dino = document.getElementById('dino');
+                            let scoreElement = document.getElementById('score');
+                            let gameOverElement = document.getElementById('gameOver');
+                            let gameContainer = document.querySelector('.game-container');
+                            let isJumping = false;
+                            let isDucking = false;
+                            
+                            function startGame() {
+                                if (gameRunning) return;
+                                gameRunning = true;
+                                gameOverElement.style.display = 'none';
+                                score = 0;
+                                gameSpeed = 2;
+                                obstacles = [];
+                                clouds = [];
+                                gameLoop();
+                                spawnObstacles();
+                                spawnClouds();
+                            }
+                            
+                            function gameLoop() {
+                                if (!gameRunning) return;
+                                
+                                score += 1;
+                                scoreElement.textContent = 'Score: ' + Math.floor(score / 10);
+                                
+                                if (score % 100 === 0) {
+                                    gameSpeed += 0.2;
+                                }
+                                
+                                obstacles.forEach((obstacle, index) => {
+                                    let currentRight = parseInt(obstacle.style.right) || 0;
+                                    obstacle.style.right = (currentRight + gameSpeed) + 'px';
+                                    
+                                    if (currentRight > 820) {
+                                        obstacle.remove();
+                                        obstacles.splice(index, 1);
+                                    }
+                                    
+                                    if (checkCollision(dino, obstacle)) {
+                                        gameOver();
+                                    }
+                                });
+                                
+                                clouds.forEach((cloud, index) => {
+                                    let currentRight = parseInt(cloud.style.right) || 0;
+                                    cloud.style.right = (currentRight + gameSpeed * 0.5) + 'px';
+                                    
+                                    if (currentRight > 850) {
+                                        cloud.remove();
+                                        clouds.splice(index, 1);
+                                    }
+                                });
+                                
+                                requestAnimationFrame(gameLoop);
+                            }
+                            
+                            function spawnObstacles() {
+                                if (!gameRunning) return;
+                                
+                                let obstacle = document.createElement('div');
+                                let rand = Math.random();
+                                
+                                if (rand < 0.7) {
+                                    obstacle.className = 'cactus';
+                                    obstacle.style.bottom = '0px';
+                                } else {
+                                    obstacle.className = 'pterodactyl';
+                                    obstacle.style.bottom = Math.random() < 0.5 ? '60px' : '90px';
+                                }
+                                
+                                obstacle.style.right = '-30px';
+                                gameContainer.appendChild(obstacle);
+                                obstacles.push(obstacle);
+                                
+                                setTimeout(spawnObstacles, Math.random() * 1000 + 1500);
+                            }
+                            
+                            function spawnClouds() {
+                                if (!gameRunning) return;
+                                
+                                let cloud = document.createElement('div');
+                                cloud.className = 'cloud';
+                                cloud.style.right = '-50px';
+                                cloud.style.top = (Math.random() * 50 + 20) + 'px';
+                                gameContainer.appendChild(cloud);
+                                clouds.push(cloud);
+                                
+                                setTimeout(spawnClouds, Math.random() * 3000 + 2000);
+                            }
+                            
+                            function jump() {
+                                if (isJumping || isDucking) return;
+                                isJumping = true;
+                                dino.classList.add('jump');
+                                
+                                setTimeout(() => {
+                                    dino.classList.remove('jump');
+                                    isJumping = false;
+                                }, 500);
+                            }
+                            
+                            function duck() {
+                                if (isJumping) return;
+                                isDucking = true;
+                                dino.classList.add('duck');
+                            }
+                            
+                            function stopDuck() {
+                                isDucking = false;
+                                dino.classList.remove('duck');
+                            }
+                            
+                            function checkCollision(dino, obstacle) {
+                                let dinoRect = dino.getBoundingClientRect();
+                                let obstacleRect = obstacle.getBoundingClientRect();
+                                
+                                return !(dinoRect.right < obstacleRect.left || 
+                                        dinoRect.left > obstacleRect.right || 
+                                        dinoRect.bottom < obstacleRect.top || 
+                                        dinoRect.top > obstacleRect.bottom);
+                            }
+                            
+                            function gameOver() {
+                                gameRunning = false;
+                                gameOverElement.style.display = 'block';
+                                
+                                obstacles.forEach(obstacle => obstacle.remove());
+                                clouds.forEach(cloud => cloud.remove());
+                                obstacles = [];
+                                clouds = [];
+                            }
+                            
+                            function restartGame() {
+                                startGame();
+                            }
+                            
+                            document.addEventListener('keydown', function(e) {
+                                if (e.code === 'Space') {
+                                    e.preventDefault();
+                                    if (!gameRunning) {
+                                        startGame();
+                                    } else {
+                                        jump();
+                                    }
+                                } else if (e.code === 'ArrowDown') {
+                                    e.preventDefault();
+                                    duck();
+                                }
+                            });
+                            
+                            document.addEventListener('keyup', function(e) {
+                                if (e.code === 'ArrowDown') {
+                                    e.preventDefault();
+                                    stopDuck();
+                                }
+                            });
+                            
+                            gameContainer.addEventListener('click', function() {
+                                if (!gameRunning) {
+                                    startGame();
+                                } else {
+                                    jump();
+                                }
+                            });
+                            
+                            gameOverElement.innerHTML = '<h2>Dino Game</h2><p>Presiona ESPACIO o haz click para empezar</p>';
+                            gameOverElement.style.display = 'block';
+                        <\/script>
+                    </body>
+                    </html>
                 `
             }
         };

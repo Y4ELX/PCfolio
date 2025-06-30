@@ -94,18 +94,7 @@
             cursor: grab;
         }
 
-        .close-btn {
-            cursor: pointer;
-            height: 100%;
-            width: 25px;
-            background-color: #151924;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #40FF23;
-        }
-
-        .maximize-btn {
+        .close-btn, .maximize-btn, .minimize-btn{
             cursor: pointer;
             height: 100%;
             width: 25px;
@@ -184,6 +173,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
 
         .taskbar-app img {
@@ -193,6 +184,16 @@
 
         .taskbar-app:hover {
             background-color: #30cc1c26;
+            border-radius: 10px;
+        }
+
+        .window-maximizing {
+            transition: all 0.3s ease-in-out !important;
+        }
+
+        .window-minimizing {
+            transition: all 0.4s ease-in-out !important;
+            transform-origin: center center;
         }
     </style>
 </head>
@@ -222,7 +223,9 @@
             </div>
         </div>
         <div class="taskbar">
-            <img src="assets/logoyael.png" style="height: 70%;" alt="">
+            <img src="assets/logoyael.png" style="height: 70%; margin-right: 10px;" alt="">
+
+            <div style="height: 70%; width: 1px; background-color: #103f08;"></div>
 
             <div class="taskbarApplications">
 
@@ -243,7 +246,9 @@
             let windowCount = 0;
 
             icons.forEach(icon => {
-                icon.addEventListener("click", () => createWindow(icon.getAttribute("data-title")));
+                icon.addEventListener("click", () => {
+                    createWindow(icon.getAttribute("data-title"), icon);
+                });
             });
 
             setInterval(() => {
@@ -294,6 +299,8 @@
                     case "New Folder":
                         windowDiv.style.width = "40vw";
                         windowDiv.style.height = "50vh";
+                        windowDiv.style.top = "calc(45% - 25vh)";
+                        windowDiv.style.left = "calc(50% - 20vw)";
                         content = `<p>Contenido de New Folder</p>`;
                         break;
                     case "CV / Resume":
@@ -320,7 +327,8 @@
                     <div class="window-header">
                         <span>${title}</span>
                         <div style="display: flex; flex-direction: row; gap: 5px; height: 100%;">
-                            <div class="maximize-btn">-</div>
+                            <div class="minimize-btn">_</div>
+                            <div class="maximize-btn">🗖</div>
                             <div class="close-btn">X</div>
                         </div>
                     </div>
@@ -348,6 +356,91 @@
 
                     setTimeout(() => {
                         windowDiv.remove();
+                    }, 300);
+                });
+
+                // Funcionalidad del botón minimizar
+                windowDiv.querySelector(".minimize-btn").addEventListener("click", () => {
+                    if (windowDiv.style.display !== "none") {
+                        let taskbarApp = document.getElementById(`taskbar-${windowId}`);
+                        if (taskbarApp) {
+                            // Obtener posiciones actuales precisas
+                            let windowRect = windowDiv.getBoundingClientRect();
+                            let taskbarRect = taskbarApp.getBoundingClientRect();
+                            
+                            // Calcular el centro de la ventana y el centro del icono de la taskbar
+                            let windowCenterX = windowRect.left + windowRect.width / 2;
+                            let windowCenterY = windowRect.top + windowRect.height / 2;
+                            let taskbarCenterX = taskbarRect.left + taskbarRect.width / 2;
+                            let taskbarCenterY = taskbarRect.top + taskbarRect.height / 2;
+                            
+                            // Calcular la distancia desde el centro de la ventana al centro del icono
+                            let deltaX = taskbarCenterX - windowCenterX;
+                            let deltaY = taskbarCenterY - windowCenterY;
+                            
+                            // Agregar clase de animación
+                            windowDiv.classList.add('window-minimizing');
+                            
+                            // Aplicar transformación hacia el centro del icono de la taskbar
+                            windowDiv.style.transformOrigin = 'center center';
+                            windowDiv.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.05)`;
+                            windowDiv.style.opacity = '0';
+                            
+                            // Después de la animación, ocultar la ventana
+                            setTimeout(() => {
+                                windowDiv.style.display = "none";
+                                windowDiv.style.transform = "";
+                                windowDiv.style.opacity = "1";
+                                windowDiv.style.transformOrigin = "";
+                                windowDiv.classList.remove('window-minimizing');
+                                taskbarApp.style.opacity = "0.5";
+                            }, 400);
+                        }
+                    }
+                });
+
+                // Funcionalidad del botón maximizar
+                let isMaximized = false;
+                let originalStyles = {
+                    width: windowDiv.style.width,
+                    height: windowDiv.style.height,
+                    top: windowDiv.style.top,
+                    left: windowDiv.style.left
+                };
+
+                windowDiv.querySelector(".maximize-btn").addEventListener("click", () => {
+                    // Agregar clase de animación
+                    windowDiv.classList.add('window-maximizing');
+                    
+                    if (!isMaximized) {
+                        // Guardar estilos originales
+                        originalStyles = {
+                            width: windowDiv.style.width,
+                            height: windowDiv.style.height,
+                            top: windowDiv.style.top,
+                            left: windowDiv.style.left
+                        };
+                        
+                        // Maximizar con animación
+                        windowDiv.style.width = "calc(100vw - 10px)";
+                        windowDiv.style.height = "calc(92vh - 10px)";
+                        windowDiv.style.top = "0px";
+                        windowDiv.style.left = "0px";
+                        windowDiv.querySelector(".maximize-btn").textContent = "🗗";
+                        isMaximized = true;
+                    } else {
+                        // Restaurar con animación
+                        windowDiv.style.width = originalStyles.width;
+                        windowDiv.style.height = originalStyles.height;
+                        windowDiv.style.top = originalStyles.top;
+                        windowDiv.style.left = originalStyles.left;
+                        windowDiv.querySelector(".maximize-btn").textContent = "🗖";
+                        isMaximized = false;
+                    }
+                    
+                    // Remover clase de animación después de completarla
+                    setTimeout(() => {
+                        windowDiv.classList.remove('window-maximizing');
                     }, 300);
                 });
             }
@@ -389,10 +482,47 @@
                 
                 taskbarApp.appendChild(iconImg);
                 
-                // Hacer que al hacer click en el botón de la taskbar, la ventana vuelva al frente
+                // Hacer que al hacer click en el botón de la taskbar, la ventana vuelva al frente o se restaure
                 taskbarApp.addEventListener("click", () => {
                     let windowDiv = document.getElementById(windowId);
                     if (windowDiv) {
+                        if (windowDiv.style.display === "none") {
+                            // Si está minimizada, restaurarla con animación desde el icono
+                            let taskbarRect = taskbarApp.getBoundingClientRect();
+                            
+                            // Mostrar la ventana primero para obtener sus dimensiones
+                            windowDiv.style.display = "block";
+                            let windowRect = windowDiv.getBoundingClientRect();
+                            
+                            // Calcular centros
+                            let taskbarCenterX = taskbarRect.left + taskbarRect.width / 2;
+                            let taskbarCenterY = taskbarRect.top + taskbarRect.height / 2;
+                            let windowCenterX = windowRect.left + windowRect.width / 2;
+                            let windowCenterY = windowRect.top + windowRect.height / 2;
+                            
+                            // Calcular distancia desde el centro del icono al centro de la ventana
+                            let deltaX = taskbarCenterX - windowCenterX;
+                            let deltaY = taskbarCenterY - windowCenterY;
+                            
+                            // Empezar desde el icono de la taskbar (pequeña y en la posición del icono)
+                            windowDiv.style.transformOrigin = 'center center';
+                            windowDiv.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.05)`;
+                            windowDiv.style.opacity = '0';
+                            windowDiv.classList.add('window-minimizing');
+                            
+                            // Animar hacia su posición y tamaño normal
+                            setTimeout(() => {
+                                windowDiv.style.transform = "";
+                                windowDiv.style.opacity = "1";
+                                
+                                setTimeout(() => {
+                                    windowDiv.style.transformOrigin = "";
+                                    windowDiv.classList.remove('window-minimizing');
+                                }, 400);
+                            }, 50);
+                            
+                            taskbarApp.style.opacity = "1";
+                        }
                         // Traer la ventana al frente
                         windowDiv.style.zIndex = getHighestZIndex() + 1;
                     }
