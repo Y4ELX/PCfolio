@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Explorer</title>
+    <style>
+        @font-face {
+            font-family: pixel;
+            src: url(assets/pixel.ttf);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: pixel;
+            background-color: #151924;
+            color: #40FF23;
+        }
+
+        /* Estilos para el explorador de archivos estilo retro */
+        .file-explorer {
+            width: 100%;
+            height: 100vh;
+            background-color: #151924;
+            display: flex;
+            flex-direction: column;
+            font-family: pixel;
+            font-size: 12px;
+            color: #40FF23;
+        }
+
+        .file-explorer-toolbar {
+            background-color: #0c0e14;
+            border-bottom: 2px solid #40FF23;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-explorer-button {
+            background-color: #151924;
+            border: 1px solid #40FF23;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: pixel;
+            color: #40FF23;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .file-explorer-button:hover {
+            background-color: #40FF23;
+            color: #151924;
+        }
+
+        .file-explorer-button:active {
+            background-color: #30cc1c;
+        }
+
+        .file-explorer-address {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid #40FF23;
+            background-color: #151924;
+            color: #40FF23;
+            font-size: 12px;
+            font-family: pixel;
+        }
+
+        .file-explorer-content {
+            flex: 1;
+            display: flex;
+            background-color: #151924;
+        }
+
+        .file-explorer-sidebar {
+            width: 200px;
+            background-color: #0c0e14;
+            border-right: 2px solid #40FF23;
+            padding: 8px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 16px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+        }
+
+        .sidebar-title {
+            font-weight: bold;
+            color: #40FF23;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .sidebar-item {
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 11px;
+            color: #40FF23;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background-color: #1a1f2e;
+            border: 1px solid #40FF23;
+        }
+
+        .file-explorer-main {
+            flex: 1;
+            padding: 8px;
+            background-color: #151924;
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+            padding: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-align: center;
+        }
+
+        .file-item:hover {
+            background-color: #1a1f2e;
+            border: 1px solid #40FF23;
+        }
+
+        .file-item.selected {
+            background-color: #40FF23;
+            color: #151924;
+        }
+
+        .file-item img {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 4px;
+        }
+
+        .file-item-name {
+            font-size: 10px;
+            font-family: pixel;
+            word-wrap: break-word;
+            max-width: 70px;
+            color: #40FF23;
+        }
+
+        .file-item.selected .file-item-name {
+            color: #151924;
+        }
+
+        .file-explorer-status {
+            background-color: #0c0e14;
+            border-top: 2px solid #40FF23;
+            padding: 6px 8px;
+            font-size: 11px;
+            color: #40FF23;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-explorer">
+        <div class="file-explorer-toolbar">
+            <div class="file-explorer-button"><</div>
+            <div class="file-explorer-button">></div>
+            <div class="file-explorer-button">^</div>
+            <div class="file-explorer-button" style="margin-right: 8px;">FIND</div>
+            <span style="margin-right: 4px;">Path:</span>
+            <input type="text" class="file-explorer-address" value="C:\\Users\\Yael\\Documents\\New Folder" readonly>
+            <div class="file-explorer-button">GO</div>
+        </div>
+        <div class="file-explorer-content">
+            <div class="file-explorer-sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">FILE TASKS</div>
+                    <div class="sidebar-item">[+] New Folder</div>
+                    <div class="sidebar-item">[*] New File</div>
+                    <div class="sidebar-item">[x] Delete</div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">PLACES</div>
+                    <div class="sidebar-item">[PC] My Computer</div>
+                    <div class="sidebar-item">[DOC] Documents</div>
+                    <div class="sidebar-item">[NET] Network</div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">INFO</div>
+                    <div style="font-size: 10px; color: #40FF23; padding: 4px 8px; line-height: 1.4;">Folder: New Folder<br>Type: Directory<br>Created: <span id="currentDate"></span><br>Items: 5</div>
+                </div>
+            </div>
+            <div class="file-explorer-main">
+                <div class="file-grid">
+                    <div class="file-item">
+                        <img src="assets/folder.png" alt="">
+                        <div class="file-item-name">Documents</div>
+                    </div>
+                    <div class="file-item">
+                        <img src="assets/folder.png" alt="">
+                        <div class="file-item-name">Images</div>
+                    </div>
+                    <div class="file-item" onclick="openReadmeFile()">
+                        <img src="assets/file.png" alt="">
+                        <div class="file-item-name">README.txt</div>
+                    </div>
+                    <div class="file-item">
+                        <img src="assets/file.png" alt="">
+                        <div class="file-item-name">Project.doc</div>
+                    </div>
+                    <div class="file-item">
+                        <img src="assets/GitHub.png" alt="">
+                        <div class="file-item-name">config.json</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="file-explorer-status">
+            [STATUS] 5 objects | Ready
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+
+        function openReadmeFile() {
+            // Comunica con el parent window para abrir el README
+            if (window.parent && window.parent.createWindow) {
+                window.parent.createWindow("README.txt - Notepad");
+            } else {
+                alert("Opening README.txt");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -37,9 +37,14 @@
             width: calc(100% - 20px);
             padding: 10px;
             background-color: #151924;
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-rows: repeat(5, 100px);
+            grid-auto-columns: min-content;
+            grid-auto-flow: column;
+            row-gap: 15px;
+            column-gap: 15px;
+            justify-items: start;
+            align-items: center;
         }
 
         .taskbar {
@@ -116,6 +121,7 @@
         }
 
         .divicon>p {
+            width: 85px;
             font-size: 13px;
             color: #40FF23;
             text-align: center;
@@ -195,6 +201,111 @@
             transition: all 0.4s ease-in-out !important;
             transform-origin: center center;
         }
+
+        .start-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            width: 300px;
+            background-color: #0c0e14;
+            border: 2px solid #40FF23;
+            border-bottom: none;
+            display: none;
+            z-index: 2000;
+        }
+
+        .start-menu.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .start-menu-header {
+            background: linear-gradient(90deg, #40FF23 0%, #30cc1c 100%);
+            color: #151924;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #40FF23;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #151924;
+            border: 2px solid #151924;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .user-status {
+            font-size: 11px;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .start-menu-content {
+            padding: 10px 0;
+        }
+
+        .start-menu-section {
+            margin-bottom: 15px;
+        }
+
+        .start-menu-title {
+            color: #40FF23;
+            font-size: 12px;
+            padding: 5px 15px;
+            margin: 0;
+            border-bottom: 1px solid #30363d;
+            background-color: #1a1f2e;
+        }
+
+        .start-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            color: #40FF23;
+            cursor: pointer;
+            font-size: 12px;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .start-menu-item:hover {
+            background-color: #1a1f2e;
+        }
+
+        .start-menu-item img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .start-menu-separator {
+            height: 1px;
+            background-color: #30363d;
+            margin: 5px 0;
+        }
     </style>
 </head>
 
@@ -221,9 +332,50 @@
                 <img src="assets/navegador.png" alt="">
                 <p class="label">Projects</p>
             </div>
+            <div class="divicon" data-title="TampiGuessr">
+                <img src="assets/TampiGuessr.png" alt="">
+                <p class="label">TampiGuessr</p>
+            </div>
+            <div class="divicon" data-title="README.txt">
+                <img src="assets/file.png" alt="">
+                <p class="label">README.txt</p>
+            </div>
         </div>
         <div class="taskbar">
-            <img src="assets/logoyael.png" style="height: 70%; margin-right: 10px;" alt="">
+            <div class="start-button" id="start-button">
+                <img src="assets/logoyael.png" style="height: auto; width: 35px; cursor: pointer; margin-right: 10px;" alt="">
+            </div>
+
+            <div class="start-menu" id="start-menu">
+                <div class="start-menu-header">
+                    <img src="assets/logoyael.png" class="user-avatar" alt="User">
+                    <div class="user-info">
+                        <p class="user-name">Yael Monterrubio</p>
+                        <p class="user-status">Desarrollador</p>
+                    </div>
+                </div>
+                <div class="start-menu-content">
+                    <div class="start-menu-section">
+                        <h3 class="start-menu-title">Aplicaciones Recientes</h3>
+                        <div id="recent-apps">
+                            <div class="start-menu-item" onclick="showMessage('No hay aplicaciones recientes')">
+                                <span>No hay aplicaciones recientes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="start-menu-separator"></div>
+                    <div class="start-menu-section">
+                        <div class="start-menu-item" onclick="showAllPrograms()">
+                            <img src="assets/folder.png" alt="">
+                            <span>Todos los programas</span>
+                        </div>
+                        <div class="start-menu-item" onclick="showMessage('Configuración no implementada')">
+                            <img src="assets/mypc.png" alt="">
+                            <span>Configuración</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div style="height: 70%; width: 1px; background-color: #103f08;"></div>
 
@@ -244,6 +396,119 @@
             let icons = document.querySelectorAll(".divicon");
             let taskbarApplications = document.querySelector(".taskbarApplications");
             let windowCount = 0;
+            let recentApps = [];
+            let startButton = document.getElementById("start-button");
+            let startMenu = document.getElementById("start-menu");
+            let isMenuOpen = false;
+
+            // Event listener para el botón de inicio
+            startButton.addEventListener("click", function(e) {
+                e.stopPropagation();
+                toggleStartMenu();
+            });
+
+            // Cerrar menú al hacer click fuera
+            document.addEventListener("click", function(e) {
+                if (isMenuOpen && !startMenu.contains(e.target) && !startButton.contains(e.target)) {
+                    closeStartMenu();
+                }
+            });
+
+            function toggleStartMenu() {
+                if (isMenuOpen) {
+                    closeStartMenu();
+                } else {
+                    openStartMenu();
+                }
+            }
+
+            function openStartMenu() {
+                startMenu.classList.add("show");
+                isMenuOpen = true;
+                updateRecentApps();
+            }
+
+            function closeStartMenu() {
+                startMenu.classList.remove("show");
+                isMenuOpen = false;
+            }
+
+            function updateRecentApps() {
+                const recentAppsContainer = document.getElementById("recent-apps");
+                recentAppsContainer.innerHTML = "";
+
+                if (recentApps.length === 0) {
+                    recentAppsContainer.innerHTML = '<div class="start-menu-item"><span>No hay aplicaciones recientes</span></div>';
+                } else {
+                    recentApps.slice(-5).reverse().forEach(app => {
+                        const item = document.createElement("div");
+                        item.className = "start-menu-item";
+                        item.onclick = () => {
+                            createWindow(app.title);
+                            closeStartMenu();
+                        };
+                        item.innerHTML = `<img src="${app.icon}" alt=""><span>${app.title}</span>`;
+                        recentAppsContainer.appendChild(item);
+                    });
+                }
+            }
+
+            function addToRecentApps(title) {
+                let icon = "assets/folder.png"; // icono por defecto
+                
+                // Asignar icono según la aplicación
+                switch(title) {
+                    case "GitHub":
+                        icon = "assets/GitHub.png";
+                        break;
+                    case "My PC":
+                        icon = "assets/mypc.png";
+                        break;
+                    case "New Folder":
+                        icon = "assets/folder.png";
+                        break;
+                    case "CV / Resume":
+                        icon = "assets/file.png";
+                        break;
+                    case "Projects":
+                        icon = "assets/navegador.png";
+                        break;
+                    case "TampiGuessr":
+                        icon = "assets/TampiGuessr.png";
+                        break;
+                    case "README.txt":
+                        icon = "assets/file.png";
+                        break;
+                    case "README.txt - Notepad":
+                        icon = "assets/file.png";
+                        break;
+                }
+
+                // Remover si ya existe
+                recentApps = recentApps.filter(app => app.title !== title);
+                
+                // Agregar al final
+                recentApps.push({ title, icon });
+                
+                // Mantener solo los últimos 10
+                if (recentApps.length > 10) {
+                    recentApps.shift();
+                }
+            }
+
+            window.showMessage = function(message) {
+                alert(message);
+                closeStartMenu();
+            }
+
+            window.showAllPrograms = function() {
+                alert("Todos los programas están en el escritorio");
+                closeStartMenu();
+            }
+
+            window.openReadmeFile = function() {
+                createWindow("README.txt - Notepad");
+            }
 
             icons.forEach(icon => {
                 icon.addEventListener("click", () => {
@@ -263,6 +528,9 @@
             function createWindow(title) {
                 windowCount++;
                 let windowId = `window-${windowCount}`;
+
+                // Agregar a aplicaciones recientes
+                addToRecentApps(title);
 
                 let windowDiv = document.createElement("div");
                 windowDiv.classList.add("window");
@@ -297,11 +565,25 @@
                         content = `<p>Contenido de My PC</p>`;
                         break;
                     case "New Folder":
-                        windowDiv.style.width = "40vw";
-                        windowDiv.style.height = "50vh";
-                        windowDiv.style.top = "calc(45% - 25vh)";
-                        windowDiv.style.left = "calc(50% - 20vw)";
-                        content = `<p>Contenido de New Folder</p>`;
+                        windowDiv.style.width = "70vw";
+                        windowDiv.style.height = "70vh";
+                        windowDiv.style.top = "calc(50% - 35vh)";
+                        windowDiv.style.left = "calc(50% - 35vw)";
+                        content = `<iframe src="fileExplorer.html" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                        break;
+                    case "README.txt":
+                        windowDiv.style.width = "75vw";
+                        windowDiv.style.height = "75vh";
+                        windowDiv.style.top = "calc(50% - 37.5vh)";
+                        windowDiv.style.left = "calc(50% - 37.5vw)";
+                        content = `<iframe src="notepad.html" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                        break;
+                    case "README.txt - Notepad":
+                        windowDiv.style.width = "75vw";
+                        windowDiv.style.height = "75vh";
+                        windowDiv.style.top = "calc(50% - 37.5vh)";
+                        windowDiv.style.left = "calc(50% - 37.5vw)";
+                        content = `<iframe src="notepad.html" style="width: 100%; height: 100%; border: none;"></iframe>`;
                         break;
                     case "CV / Resume":
                         windowDiv.style.width = "90vh";
@@ -309,6 +591,14 @@
                         windowDiv.style.top = "calc(45% - 40vh)";
                         windowDiv.style.left = "calc(50% - 45vh)";
                         content = `<iframe src="curriculumVitae.html" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                        break;
+                    case "TampiGuessr":
+                        // Iniciar maximizado
+                        windowDiv.style.width = "calc(100vw - 10px)";
+                        windowDiv.style.height = "calc(92vh - 10px)";
+                        windowDiv.style.top = "0px";
+                        windowDiv.style.left = "0px";
+                        content = `<iframe src="https://tampiguessr-17a8b.web.app/" style="width: 100%; height: 100%; border: none;" allow="geolocation *; camera; microphone"></iframe>`;
                         break;
                     case "Projects":
                         windowDiv.style.width = "95vw";
@@ -408,6 +698,19 @@
                     left: windowDiv.style.left
                 };
 
+                // Si es TampiGuessr, empezar maximizado
+                if (title === "TampiGuessr") {
+                    isMaximized = true;
+                    windowDiv.querySelector(".maximize-btn").textContent = "🗗";
+                    // Guardar los estilos originales (tamaño pequeño para cuando se restaure)
+                    originalStyles = {
+                        width: "95vw",
+                        height: "90vh",
+                        top: "calc(50% - 45vh)",
+                        left: "calc(50% - 47.5vw)"
+                    };
+                }
+
                 windowDiv.querySelector(".maximize-btn").addEventListener("click", () => {
                     // Agregar clase de animación
                     windowDiv.classList.add('window-maximizing');
@@ -474,6 +777,11 @@
                     case "Projects":
                         iconImg.src = "assets/navegador.png";
                         iconImg.alt = "Projects";
+                        break;
+                    case "README.txt":
+                    case "README.txt - Notepad":
+                        iconImg.src = "assets/file.png";
+                        iconImg.alt = "README.txt";
                         break;
                     default:
                         iconImg.src = "assets/folder.png"; // Icono por defecto

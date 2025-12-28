@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notepad</title>
+    <style>
+        @font-face {
+            font-family: pixel;
+            src: url(assets/pixel.ttf);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: pixel;
+            background-color: #151924;
+            color: #40FF23;
+        }
+
+        /* Estilos para el bloc de notas retro */
+        .notepad {
+            width: 100%;
+            height: 100vh;
+            background-color: #151924;
+            display: flex;
+            flex-direction: column;
+            font-family: pixel;
+        }
+
+        .notepad-menubar {
+            background-color: #0c0e14;
+            border-bottom: 2px solid #40FF23;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .notepad-menu {
+            color: #40FF23;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .notepad-menu:hover {
+            background-color: #40FF23;
+            color: #151924;
+        }
+
+        .notepad-content {
+            flex: 1;
+            padding: 12px;
+            background-color: #151924;
+            overflow: hidden;
+        }
+
+        .notepad-text {
+            width: 100%;
+            height: 100%;
+            background-color: #151924;
+            color: #40FF23;
+            border: none;
+            outline: none;
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            resize: none;
+            white-space: pre-wrap;
+        }
+
+        .notepad-text::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .notepad-text::-webkit-scrollbar-track {
+            background-color: #0c0e14;
+        }
+
+        .notepad-text::-webkit-scrollbar-thumb {
+            background-color: #40FF23;
+            border: 1px solid #0c0e14;
+        }
+
+        .notepad-status {
+            background-color: #0c0e14;
+            border-top: 2px solid #40FF23;
+            padding: 4px 8px;
+            font-size: 11px;
+            color: #40FF23;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="notepad">
+        <div class="notepad-menubar">
+            <span class="notepad-menu">File</span>
+            <span class="notepad-menu">Edit</span>
+            <span class="notepad-menu">Format</span>
+            <span class="notepad-menu">View</span>
+            <span class="notepad-menu">Help</span>
+        </div>
+        <div class="notepad-content">
+            <textarea class="notepad-text" readonly>
+╔═════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                    BIENVENIDO A MI PORTAFOLIO                                   ║
+╚═════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+                __  __         __        __  ___          __                   __   _    
+                \ \/ /__ ____ / /       /  |/  /__  ___  / /____ __________ __/ /  (_)__ 
+                \  / _ `/ -_) /        / /|_/ / _ \/ _ \/ __/ -_) __/ __/ // / _ \/ / _ \
+                /_/\_,_/\__/_/        /_/  /_/\___/_//_/\__/\__/_/ /_/  \_,_/_.__/_/\___/
+
+
+╔═════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                          INFORMACIÓN                                            ║
+╚═════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Hola, mi nombre es Yael Monterrubio.
+Tengo 20 años y soy Ingeniero en Sistemas Computacionales y Electrónicos.
+
+Este es mi portafolio personal. Aquí encontrarás algunos de los proyectos que he 
+desarrollado, tanto por iniciativa propia como para clientes reales.
+
+Uno de ellos es Tampiguessr, un videojuego donde apareces en un punto aleatorio de 
+Tampico y debes adivinar tu ubicación usando el entorno.
+También está Taller de Multiservicios Willy, una página web para la gestión de 
+pedidos que desarrollé para un cliente.
+
+El resto de los archivos muestran otros proyectos, pruebas e ideas que reflejan mi 
+experiencia y crecimiento como desarrollador.
+
+Siéntete libre de explorar.
+
+
+╔═════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                               CONTACTO                                          ║
+╚═════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+📧 Email: yael.monterrubio@example.com
+💼 GitHub: github.com/Y4ELX
+🌐 Web: yaelmonterrubio.dev
+
+
+╔═════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                            ULTIMA ACTUALIZACIÓN                                 ║
+╚═════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Fecha: <span id="currentDate"></span>
+Versión: 2.0
+Estado: Activo
+            </textarea>
+        </div>
+        <div class="notepad-status">
+            <span>[READY] README.txt</span>
+            <span>Line 1, Col 1</span>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html>

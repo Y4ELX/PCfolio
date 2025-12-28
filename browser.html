@@ -198,7 +198,6 @@
             justify-content: space-between;
         }
 
-        /* Scrollbar personalizado */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -219,608 +218,451 @@
 </head>
 <body>
     <div class="browser-container">
-        <!-- Barra de direcciones -->
         <div class="address-bar">
-            <button class="nav-btn" onclick="goBack()" disabled>◀</button>
-            <button class="nav-btn" onclick="goForward()" disabled>▶</button>
-            <button class="nav-btn" onclick="refresh()">⟳</button>
-            <input type="text" class="url-input" placeholder="Introduce una URL..." value="chrome://dino">
-            <button class="go-btn" onclick="navigateToURL()">IR</button>
+            <button class="nav-btn" disabled>◀</button>
+            <button class="nav-btn" disabled>▶</button>
+            <button class="nav-btn">⟳</button>
+            <input type="text" class="url-input" placeholder="Introduce una URL..." value="https://tampiguessr-17a8b.web.app/">
+            <button class="go-btn">IR</button>
         </div>
 
-        <!-- Pestañas -->
         <div class="tabs-container">
             <div class="tab active" data-tab-id="1">
-                <span>Dino Game - Chrome</span>
+                <span>TampiGuessr</span>
                 <div class="tab-close">×</div>
             </div>
             <button class="new-tab-btn" id="new-tab-btn">+</button>
         </div>
         
-        <!-- Área de contenido -->
         <div class="content-area">
-            <iframe class="browser-iframe" src="about:blank"></iframe>
+            <iframe class="browser-iframe" src="" allow="geolocation *"></iframe>
             <div class="loading" style="display: none;">Cargando...</div>
         </div>
 
-        <!-- Barra de estado -->
         <div class="status-bar">
             <span class="status-text">Listo</span>
-            <span class="page-info">chrome://dino</span>
+            <span class="page-info">https://tampiguessr-17a8b.web.app/</span>
         </div>
     </div>
 
     <script>
-        let tabCounter = 1;
-        let currentTabId = 1;
-        let tabs = {
-            1: {
-                title: 'Dino Game - Chrome',
-                url: 'chrome://dino',
-                content: `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            @font-face {
-                                font-family: pixel;
-                                src: url(assets/pixel.ttf);
-                            }
-                            
-                            body {
-                                margin: 0;
-                                padding: 0;
-                                background: #f7f7f7;
-                                font-family: pixel, monospace;
-                                overflow: hidden;
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                height: 100vh;
-                            }
-                            
-                            .game-container {
-                                width: 800px;
-                                height: 200px;
-                                background: #f7f7f7;
-                                position: relative;
-                                border-bottom: 2px solid #535353;
-                                overflow: hidden;
-                            }
-                            
-                            .dino {
-                                width: 44px;
-                                height: 47px;
-                                background: #535353;
-                                position: absolute;
-                                bottom: 0;
-                                left: 50px;
-                            }
-                            
-                            .dino::before {
-                                content: '';
-                                position: absolute;
-                                width: 20px;
-                                height: 20px;
-                                background: #535353;
-                                top: 5px;
-                                left: 15px;
-                                border-radius: 50% 50% 0 0;
-                            }
-                            
-                            .dino::after {
-                                content: '';
-                                position: absolute;
-                                width: 8px;
-                                height: 8px;
-                                background: white;
-                                border-radius: 50%;
-                                top: 8px;
-                                left: 25px;
-                            }
-                            
-                            .dino.jump {
-                                animation: jump 0.5s ease-out;
-                            }
-                            
-                            .dino.duck {
-                                height: 25px;
-                                margin-top: 22px;
-                            }
-                            
-                            @keyframes jump {
-                                0% { bottom: 0; }
-                                50% { bottom: 80px; }
-                                100% { bottom: 0; }
-                            }
-                            
-                            .cactus {
-                                width: 20px;
-                                height: 40px;
-                                background: #535353;
-                                position: absolute;
-                                bottom: 0;
-                                right: -20px;
-                            }
-                            
-                            .cactus::before {
-                                content: '';
-                                position: absolute;
-                                width: 8px;
-                                height: 15px;
-                                background: #535353;
-                                top: 10px;
-                                left: -4px;
-                            }
-                            
-                            .cactus::after {
-                                content: '';
-                                position: absolute;
-                                width: 8px;
-                                height: 15px;
-                                background: #535353;
-                                top: 5px;
-                                right: -4px;
-                            }
-                            
-                            .pterodactyl {
-                                width: 30px;
-                                height: 25px;
-                                background: #535353;
-                                position: absolute;
-                                right: -30px;
-                                clip-path: polygon(0 50%, 20% 0%, 40% 20%, 60% 0%, 80% 30%, 100% 50%, 80% 70%, 60% 100%, 40% 80%, 20% 100%);
-                            }
-                            
-                            .cloud {
-                                width: 50px;
-                                height: 20px;
-                                background: #535353;
-                                border-radius: 20px;
-                                position: absolute;
-                                top: 30px;
-                                right: -50px;
-                                opacity: 0.3;
-                            }
-                            
-                            .cloud::before {
-                                content: '';
-                                position: absolute;
-                                width: 20px;
-                                height: 20px;
-                                background: #535353;
-                                border-radius: 50%;
-                                top: -10px;
-                                left: 10px;
-                            }
-                            
-                            .cloud::after {
-                                content: '';
-                                position: absolute;
-                                width: 25px;
-                                height: 25px;
-                                background: #535353;
-                                border-radius: 50%;
-                                top: -12px;
-                                right: 10px;
-                            }
-                            
-                            .score {
-                                position: absolute;
-                                top: 20px;
-                                right: 20px;
-                                font-family: pixel, monospace;
-                                font-size: 16px;
-                                color: #535353;
-                            }
-                            
-                            .game-over {
-                                position: absolute;
-                                top: 50%;
-                                left: 50%;
-                                transform: translate(-50%, -50%);
-                                text-align: center;
-                                font-family: pixel, monospace;
-                                color: #535353;
-                                display: none;
-                            }
-                            
-                            .restart-btn {
-                                background: #535353;
-                                color: white;
-                                border: none;
-                                padding: 10px 20px;
-                                font-family: pixel, monospace;
-                                cursor: pointer;
-                                margin-top: 10px;
-                            }
-                            
-                            .instructions {
-                                position: absolute;
-                                bottom: -30px;
-                                left: 50%;
-                                transform: translateX(-50%);
-                                font-family: pixel, monospace;
-                                color: #535353;
-                                font-size: 12px;
-                                text-align: center;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="game-container">
-                            <div class="dino" id="dino"></div>
-                            <div class="score" id="score">Score: 0</div>
-                            <div class="game-over" id="gameOver">
-                                <h2>Game Over</h2>
-                                <button class="restart-btn" onclick="restartGame()">Restart</button>
-                            </div>
-                            <div class="instructions">
-                                Presiona ESPACIO para saltar • ↓ para agacharse
-                            </div>
-                        </div>
-                        
-                        <script>
-                            let gameRunning = false;
-                            let score = 0;
-                            let obstacles = [];
-                            let clouds = [];
-                            let gameSpeed = 2;
-                            let dino = document.getElementById('dino');
-                            let scoreElement = document.getElementById('score');
-                            let gameOverElement = document.getElementById('gameOver');
-                            let gameContainer = document.querySelector('.game-container');
-                            let isJumping = false;
-                            let isDucking = false;
-                            
-                            function startGame() {
-                                if (gameRunning) return;
-                                gameRunning = true;
-                                gameOverElement.style.display = 'none';
-                                score = 0;
-                                gameSpeed = 2;
-                                obstacles = [];
-                                clouds = [];
-                                gameLoop();
-                                spawnObstacles();
-                                spawnClouds();
-                            }
-                            
-                            function gameLoop() {
-                                if (!gameRunning) return;
-                                
-                                score += 1;
-                                scoreElement.textContent = 'Score: ' + Math.floor(score / 10);
-                                
-                                if (score % 100 === 0) {
-                                    gameSpeed += 0.2;
-                                }
-                                
-                                obstacles.forEach((obstacle, index) => {
-                                    let currentRight = parseInt(obstacle.style.right) || 0;
-                                    obstacle.style.right = (currentRight + gameSpeed) + 'px';
-                                    
-                                    if (currentRight > 820) {
-                                        obstacle.remove();
-                                        obstacles.splice(index, 1);
-                                    }
-                                    
-                                    if (checkCollision(dino, obstacle)) {
-                                        gameOver();
-                                    }
-                                });
-                                
-                                clouds.forEach((cloud, index) => {
-                                    let currentRight = parseInt(cloud.style.right) || 0;
-                                    cloud.style.right = (currentRight + gameSpeed * 0.5) + 'px';
-                                    
-                                    if (currentRight > 850) {
-                                        cloud.remove();
-                                        clouds.splice(index, 1);
-                                    }
-                                });
-                                
-                                requestAnimationFrame(gameLoop);
-                            }
-                            
-                            function spawnObstacles() {
-                                if (!gameRunning) return;
-                                
-                                let obstacle = document.createElement('div');
-                                let rand = Math.random();
-                                
-                                if (rand < 0.7) {
-                                    obstacle.className = 'cactus';
-                                    obstacle.style.bottom = '0px';
-                                } else {
-                                    obstacle.className = 'pterodactyl';
-                                    obstacle.style.bottom = Math.random() < 0.5 ? '60px' : '90px';
-                                }
-                                
-                                obstacle.style.right = '-30px';
-                                gameContainer.appendChild(obstacle);
-                                obstacles.push(obstacle);
-                                
-                                setTimeout(spawnObstacles, Math.random() * 1000 + 1500);
-                            }
-                            
-                            function spawnClouds() {
-                                if (!gameRunning) return;
-                                
-                                let cloud = document.createElement('div');
-                                cloud.className = 'cloud';
-                                cloud.style.right = '-50px';
-                                cloud.style.top = (Math.random() * 50 + 20) + 'px';
-                                gameContainer.appendChild(cloud);
-                                clouds.push(cloud);
-                                
-                                setTimeout(spawnClouds, Math.random() * 3000 + 2000);
-                            }
-                            
-                            function jump() {
-                                if (isJumping || isDucking) return;
-                                isJumping = true;
-                                dino.classList.add('jump');
-                                
-                                setTimeout(() => {
-                                    dino.classList.remove('jump');
-                                    isJumping = false;
-                                }, 500);
-                            }
-                            
-                            function duck() {
-                                if (isJumping) return;
-                                isDucking = true;
-                                dino.classList.add('duck');
-                            }
-                            
-                            function stopDuck() {
-                                isDucking = false;
-                                dino.classList.remove('duck');
-                            }
-                            
-                            function checkCollision(dino, obstacle) {
-                                let dinoRect = dino.getBoundingClientRect();
-                                let obstacleRect = obstacle.getBoundingClientRect();
-                                
-                                return !(dinoRect.right < obstacleRect.left || 
-                                        dinoRect.left > obstacleRect.right || 
-                                        dinoRect.bottom < obstacleRect.top || 
-                                        dinoRect.top > obstacleRect.bottom);
-                            }
-                            
-                            function gameOver() {
-                                gameRunning = false;
-                                gameOverElement.style.display = 'block';
-                                
-                                obstacles.forEach(obstacle => obstacle.remove());
-                                clouds.forEach(cloud => cloud.remove());
-                                obstacles = [];
-                                clouds = [];
-                            }
-                            
-                            function restartGame() {
-                                startGame();
-                            }
-                            
-                            document.addEventListener('keydown', function(e) {
-                                if (e.code === 'Space') {
-                                    e.preventDefault();
-                                    if (!gameRunning) {
-                                        startGame();
-                                    } else {
-                                        jump();
-                                    }
-                                } else if (e.code === 'ArrowDown') {
-                                    e.preventDefault();
-                                    duck();
-                                }
-                            });
-                            
-                            document.addEventListener('keyup', function(e) {
-                                if (e.code === 'ArrowDown') {
-                                    e.preventDefault();
-                                    stopDuck();
-                                }
-                            });
-                            
-                            gameContainer.addEventListener('click', function() {
-                                if (!gameRunning) {
-                                    startGame();
-                                } else {
-                                    jump();
-                                }
-                            });
-                            
-                            gameOverElement.innerHTML = '<h2>Dino Game</h2><p>Presiona ESPACIO o haz click para empezar</p>';
-                            gameOverElement.style.display = 'block';
-                        <\/script>
-                    </body>
-                    </html>
-                `
+        class BrowserState {
+            constructor() {
+                this.tabs = new Map();
+                this.currentTabId = null;
+                this.tabCounter = 0;
+                this.defaultHomepage = 'https://tampiguessr-17a8b.web.app/';
             }
-        };
 
-        function switchTab(tabId) {
-            // Remover clase active de todas las pestañas
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Agregar clase active a la pestaña seleccionada
-            document.querySelector(`[data-tab-id="${tabId}"]`).classList.add('active');
-            
-            currentTabId = tabId;
-            loadTabContent(tabId);
-        }
-
-        function loadTabContent(tabId) {
-            const tab = tabs[tabId];
-            const iframe = document.querySelector('.browser-iframe');
-            const urlInput = document.querySelector('.url-input');
-            const statusText = document.querySelector('.status-text');
-            const pageInfo = document.querySelector('.page-info');
-            
-            if (tab) {
-                urlInput.value = tab.url;
-                pageInfo.textContent = tab.url;
+            createTab(url = null, title = null) {
+                this.tabCounter++;
+                const tabId = this.tabCounter;
                 
-                if (tab.url.startsWith('about:')) {
-                    // Contenido local
-                    iframe.srcdoc = tab.content;
-                    statusText.textContent = 'Listo';
-                } else {
-                    // URL externa
-                    statusText.textContent = 'Cargando...';
-                    iframe.src = tab.url;
-                    
-                    iframe.onload = function() {
-                        statusText.textContent = 'Listo';
-                    };
+                const tab = {
+                    id: tabId,
+                    title: title || 'Nueva pestaña',
+                    url: url || this.defaultHomepage,
+                    history: [],
+                    historyIndex: -1,
+                    isLocal: this.isLocalUrl(url || this.defaultHomepage)
+                };
+
+                this.tabs.set(tabId, tab);
+                return tab;
+            }
+
+            getTab(tabId) {
+                return this.tabs.get(tabId);
+            }
+
+            deleteTab(tabId) {
+                this.tabs.delete(tabId);
+            }
+
+            getCurrentTab() {
+                return this.tabs.get(this.currentTabId);
+            }
+
+            setCurrentTab(tabId) {
+                this.currentTabId = tabId;
+            }
+
+            getAllTabs() {
+                return Array.from(this.tabs.values());
+            }
+
+            getTabCount() {
+                return this.tabs.size;
+            }
+
+            isLocalUrl(url) {
+                return url.startsWith('about:') || url.startsWith('chrome://');
+            }
+
+            addToHistory(tabId, url) {
+                const tab = this.getTab(tabId);
+                if (!tab) return;
+
+                if (tab.historyIndex < tab.history.length - 1) {
+                    tab.history = tab.history.slice(0, tab.historyIndex + 1);
                 }
-            }
-        }
 
-        function addNewTab() {
-            tabCounter++;
-            const newTabId = tabCounter;
-            
-            tabs[newTabId] = {
-                title: 'Nueva pestaña',
-                url: 'about:blank',
-                content: '<div style="font-family: pixel; background: #151924; color: #40FF23; padding: 20px; text-align: center;"><h2>Nueva pestaña</h2><p>Introduce una URL para navegar</p></div>'
-            };
-            
-            // Crear el elemento de pestaña
-            const newTabBtn = document.querySelector('.new-tab-btn');
-            const newTab = document.createElement('div');
-            newTab.className = 'tab';
-            newTab.setAttribute('data-tab-id', newTabId);
-            newTab.innerHTML = `
-                <span>Nueva pestaña</span>
-                <div class="tab-close">×</div>
-            `;
-            
-            // Agregar event listener para hacer clic en la pestaña
-            newTab.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('tab-close')) {
-                    switchTab(newTabId);
+                tab.history.push(url);
+                tab.historyIndex = tab.history.length - 1;
+            }
+
+            canGoBack(tabId) {
+                const tab = this.getTab(tabId);
+                return tab && tab.historyIndex > 0;
+            }
+
+            canGoForward(tabId) {
+                const tab = this.getTab(tabId);
+                return tab && tab.historyIndex < tab.history.length - 1;
+            }
+
+            goBack(tabId) {
+                const tab = this.getTab(tabId);
+                if (this.canGoBack(tabId)) {
+                    tab.historyIndex--;
+                    return tab.history[tab.historyIndex];
                 }
-            });
-            
-            // Agregar event listener para cerrar la pestaña
-            const closeBtn = newTab.querySelector('.tab-close');
-            closeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                closeTab(newTabId);
-            });
-            
-            newTabBtn.parentNode.insertBefore(newTab, newTabBtn);
-            switchTab(newTabId);
-        }
+                return null;
+            }
 
-        function closeTab(tabId, event) {
-            if (event) {
-                event.stopPropagation();
-                event.preventDefault();
-            }
-            
-            if (Object.keys(tabs).length === 1) {
-                return; // No cerrar la última pestaña
-            }
-            
-            delete tabs[tabId];
-            const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
-            if (tabElement) {
-                tabElement.remove();
-            }
-            
-            if (currentTabId === tabId) {
-                // Cambiar a la primera pestaña disponible
-                const firstTabId = Object.keys(tabs)[0];
-                switchTab(parseInt(firstTabId));
+            goForward(tabId) {
+                const tab = this.getTab(tabId);
+                if (this.canGoForward(tabId)) {
+                    tab.historyIndex++;
+                    return tab.history[tab.historyIndex];
+                }
+                return null;
             }
         }
 
-        function navigateToURL() {
-            const url = document.querySelector('.url-input').value;
-            tabs[currentTabId].url = url;
-            
-            if (url.startsWith('about:')) {
-                tabs[currentTabId].content = '<div style="font-family: pixel; background: #151924; color: #40FF23; padding: 20px;"><h2>Página no encontrada</h2><p>La página about: solicitada no existe.</p></div>';
+        class BrowserUI {
+            constructor(state) {
+                this.state = state;
+                this.elements = {
+                    tabsContainer: document.querySelector('.tabs-container'),
+                    newTabBtn: document.getElementById('new-tab-btn'),
+                    urlInput: document.querySelector('.url-input'),
+                    iframe: document.querySelector('.browser-iframe'),
+                    statusText: document.querySelector('.status-text'),
+                    pageInfo: document.querySelector('.page-info'),
+                    backBtn: document.querySelector('.nav-btn:nth-child(1)'),
+                    forwardBtn: document.querySelector('.nav-btn:nth-child(2)'),
+                    refreshBtn: document.querySelector('.nav-btn:nth-child(3)'),
+                    goBtn: document.querySelector('.go-btn')
+                };
             }
-            
-            // Actualizar título de la pestaña
-            const tabElement = document.querySelector(`[data-tab-id="${currentTabId}"] span`);
-            if (url.length > 20) {
-                tabElement.textContent = url.substring(0, 17) + '...';
-            } else {
-                tabElement.textContent = url || 'Nueva pestaña';
-            }
-            
-            loadTabContent(currentTabId);
-        }
 
-        function quickNavigate(url) {
-            document.querySelector('.url-input').value = url;
-            navigateToURL();
-        }
+            createTabElement(tab) {
+                const tabElement = document.createElement('div');
+                tabElement.className = 'tab';
+                tabElement.setAttribute('data-tab-id', tab.id);
+                
+                const displayTitle = this.getTitleForDisplay(tab.title);
+                
+                tabElement.innerHTML = `
+                    <span>${displayTitle}</span>
+                    <div class="tab-close">×</div>
+                `;
 
-        function goBack() {
-            // Funcionalidad de retroceso (simplificada)
-            console.log('Ir atrás');
-        }
-
-        function goForward() {
-            // Funcionalidad de avance (simplificada)
-            console.log('Ir adelante');
-        }
-
-        function refresh() {
-            loadTabContent(currentTabId);
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar contenido inicial
-            loadTabContent(1);
-            
-            // Event listener para la pestaña inicial
-            const initialTab = document.querySelector('[data-tab-id="1"]');
-            if (initialTab) {
-                initialTab.addEventListener('click', (e) => {
+                tabElement.addEventListener('click', (e) => {
                     if (!e.target.classList.contains('tab-close')) {
-                        switchTab(1);
+                        browser.switchToTab(tab.id);
                     }
                 });
+
+                const closeBtn = tabElement.querySelector('.tab-close');
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    browser.closeTab(tab.id);
+                });
+
+                return tabElement;
+            }
+
+            addTabToUI(tab) {
+                const tabElement = this.createTabElement(tab);
+                this.elements.tabsContainer.insertBefore(tabElement, this.elements.newTabBtn);
+                return tabElement;
+            }
+
+            removeTabFromUI(tabId) {
+                const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
+                if (tabElement) {
+                    tabElement.remove();
+                }
+            }
+
+            setActiveTab(tabId) {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
                 
-                // Event listener para cerrar la pestaña inicial
-                const initialCloseBtn = initialTab.querySelector('.tab-close');
-                if (initialCloseBtn) {
-                    initialCloseBtn.addEventListener('click', (e) => {
+                const activeTab = document.querySelector(`[data-tab-id="${tabId}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('active');
+                }
+            }
+
+            updateTabTitle(tabId, title) {
+                const tabElement = document.querySelector(`[data-tab-id="${tabId}"] span`);
+                if (tabElement) {
+                    tabElement.textContent = this.getTitleForDisplay(title);
+                }
+            }
+
+            getTitleForDisplay(title) {
+                return title.length > 20 ? title.substring(0, 17) + '...' : title;
+            }
+
+            loadContent(tab) {
+                if (!tab) return;
+
+                this.elements.urlInput.value = tab.url;
+                this.elements.pageInfo.textContent = tab.url;
+                this.updateNavigationButtons();
+
+                this.elements.iframe.onload = null;
+                this.elements.iframe.onerror = null;
+
+                if (this.state.isLocalUrl(tab.url)) {
+                    this.loadLocalContent(tab);
+                } else {
+                    this.loadExternalContent(tab);
+                }
+            }
+
+            loadLocalContent(tab) {
+                this.elements.iframe.src = '';
+                this.elements.iframe.srcdoc = this.getLocalContent(tab.url);
+                this.elements.statusText.textContent = 'Listo';
+            }
+
+            loadExternalContent(tab) {
+                this.elements.statusText.textContent = 'Cargando...';
+                this.elements.iframe.removeAttribute('srcdoc');
+                this.elements.iframe.src = tab.url;
+
+                this.elements.iframe.onload = () => {
+                    this.elements.statusText.textContent = 'Listo';
+                };
+
+                this.elements.iframe.onerror = () => {
+                    this.elements.statusText.textContent = 'Error al cargar';
+                };
+            }
+
+            getLocalContent(url) {
+                if (url === 'about:blank' || url === 'chrome://newtab') {
+                    return `
+                        <div style="font-family: pixel; background: #151924; color: #40FF23; padding: 20px; text-align: center; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <h1>Nueva pestaña</h1>
+                            <p>Introduce una URL para navegar</p>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div style="font-family: pixel; background: #151924; color: #40FF23; padding: 20px; text-align: center; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <h1>Página no encontrada</h1>
+                        <p>La página local solicitada no existe.</p>
+                    </div>
+                `;
+            }
+
+            updateNavigationButtons() {
+                const currentTab = this.state.getCurrentTab();
+                if (!currentTab) return;
+
+                this.elements.backBtn.disabled = !this.state.canGoBack(currentTab.id);
+                this.elements.forwardBtn.disabled = !this.state.canGoForward(currentTab.id);
+            }
+
+            normalizeUrl(url) {
+                url = url.trim();
+                
+                if (!url) return this.state.defaultHomepage;
+                
+                if (url.startsWith('http://') || url.startsWith('https://') || 
+                    url.startsWith('about:') || url.startsWith('chrome://')) {
+                    return url;
+                }
+                
+                if (url.includes('.')) {
+                    return 'https://' + url;
+                }
+                
+                return 'https://www.google.com/search?q=' + encodeURIComponent(url);
+            }
+
+            extractTitleFromUrl(url) {
+                try {
+                    const urlObj = new URL(url);
+                    return urlObj.hostname.replace('www.', '');
+                } catch(e) {
+                    return url;
+                }
+            }
+        }
+
+        class Browser {
+            constructor() {
+                this.state = new BrowserState();
+                this.ui = new BrowserUI(this.state);
+                this.initialize();
+            }
+
+            initialize() {
+                const initialTab = this.state.createTab(
+                    this.state.defaultHomepage,
+                    'TampiGuessr'
+                );
+                
+                this.state.setCurrentTab(initialTab.id);
+                this.state.addToHistory(initialTab.id, initialTab.url);
+                
+                this.ui.setActiveTab(initialTab.id);
+                this.ui.loadContent(initialTab);
+                
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                this.ui.elements.newTabBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.createNewTab();
+                });
+
+                this.ui.elements.goBtn.addEventListener('click', () => {
+                    this.navigate();
+                });
+
+                this.ui.elements.urlInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.navigate();
+                    }
+                });
+
+                this.ui.elements.backBtn.addEventListener('click', () => {
+                    this.goBack();
+                });
+
+                this.ui.elements.forwardBtn.addEventListener('click', () => {
+                    this.goForward();
+                });
+
+                this.ui.elements.refreshBtn.addEventListener('click', () => {
+                    this.refresh();
+                });
+
+                const initialTabElement = document.querySelector('[data-tab-id="1"]');
+                if (initialTabElement) {
+                    const closeBtn = initialTabElement.querySelector('.tab-close');
+                    closeBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        e.preventDefault();
-                        closeTab(1);
+                        this.closeTab(1);
                     });
                 }
             }
-            
-            // Event listener para el botón de nueva pestaña
-            const newTabBtn = document.getElementById('new-tab-btn');
-            if (newTabBtn) {
-                newTabBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    addNewTab();
-                });
-            }
-            
-            // Enter en la barra de direcciones
-            document.querySelector('.url-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    navigateToURL();
+
+            createNewTab(url = null) {
+                const newTab = this.state.createTab(url);
+                this.ui.addTabToUI(newTab);
+                this.switchToTab(newTab.id);
+                
+                if (url) {
+                    this.state.addToHistory(newTab.id, url);
                 }
-            });
+            }
+
+            switchToTab(tabId) {
+                const tab = this.state.getTab(tabId);
+                if (!tab) return;
+
+                this.state.setCurrentTab(tabId);
+                this.ui.setActiveTab(tabId);
+                this.ui.loadContent(tab);
+            }
+
+            closeTab(tabId) {
+                if (this.state.getTabCount() === 1) return;
+
+                if (this.state.currentTabId === tabId) {
+                    const allTabs = this.state.getAllTabs();
+                    const nextTab = allTabs.find(t => t.id !== tabId);
+                    if (nextTab) {
+                        this.switchToTab(nextTab.id);
+                    }
+                }
+
+                this.state.deleteTab(tabId);
+                this.ui.removeTabFromUI(tabId);
+            }
+
+            navigate(url = null) {
+                const currentTab = this.state.getCurrentTab();
+                if (!currentTab) return;
+
+                if (!url) {
+                    url = this.ui.elements.urlInput.value;
+                }
+
+                url = this.ui.normalizeUrl(url);
+
+                currentTab.url = url;
+                currentTab.isLocal = this.state.isLocalUrl(url);
+                
+                const title = this.ui.extractTitleFromUrl(url);
+                currentTab.title = title;
+                this.ui.updateTabTitle(currentTab.id, title);
+
+                this.state.addToHistory(currentTab.id, url);
+
+                this.ui.loadContent(currentTab);
+            }
+
+            goBack() {
+                const currentTab = this.state.getCurrentTab();
+                if (!currentTab) return;
+
+                const url = this.state.goBack(currentTab.id);
+                if (url) {
+                    currentTab.url = url;
+                    currentTab.title = this.ui.extractTitleFromUrl(url);
+                    this.ui.updateTabTitle(currentTab.id, currentTab.title);
+                    this.ui.loadContent(currentTab);
+                }
+            }
+
+            goForward() {
+                const currentTab = this.state.getCurrentTab();
+                if (!currentTab) return;
+
+                const url = this.state.goForward(currentTab.id);
+                if (url) {
+                    currentTab.url = url;
+                    currentTab.title = this.ui.extractTitleFromUrl(url);
+                    this.ui.updateTabTitle(currentTab.id, currentTab.title);
+                    this.ui.loadContent(currentTab);
+                }
+            }
+
+            refresh() {
+                const currentTab = this.state.getCurrentTab();
+                if (currentTab) {
+                    this.ui.loadContent(currentTab);
+                }
+            }
+        }
+
+        let browser;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            browser = new Browser();
         });
     </script>
 </body>
